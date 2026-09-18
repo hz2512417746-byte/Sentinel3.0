@@ -1,0 +1,57 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: dpi-fraud-detection
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/dpi_fraud?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: ${MYSQL_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: dpi-backend
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+# 增块引擎配置
+zengkuai:
+  native-lib-path: ../zengkuai/build/libzengkuai.so
+  cleanup-interval-minutes: 60
+
+# 规则引擎
+rules:
+  auto-reload: true
+  reload-interval-seconds: 30
+
+# 大模型接口（预留）
+llm:
+  enabled: false
+  endpoint: http://localhost:11434/api/generate
+  model: qwen2.5:7b

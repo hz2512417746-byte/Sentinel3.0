@@ -1,0 +1,5 @@
+node_modules/
+target/
+*.log
+frontend/dist/
+simulator/dependency-reduced-pom.xml

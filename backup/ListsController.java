@@ -1,0 +1,92 @@
+package com.antifraud.controller;
+
+import com.antifraud.entity.*;
+import com.antifraud.repository.*;
+import org.springframework.web.bind.annotation.*;
+import java.time.LocalDateTime;
+import java.util.*;
+
+@RestController @RequestMapping("/api/lists")
+public class ListsController {
+    private final BlockRecordRepository blockRepo;
+    private final LogEventRepository logRepo;
+    private final AlertRepository alertRepo;
+
+    public ListsController(BlockRecordRepository blockRepo, LogEventRepository logRepo, AlertRepository alertRepo) {
+        this.blockRepo = blockRepo; this.logRepo = logRepo; this.alertRepo = alertRepo;
+    }
+
+    @GetMapping
+    public Map<String, Object> getLists() {
+        List<BlockRecord> active = blockRepo.findByActiveTrue();
+        Set<String> interceptUsers = new HashSet<>(), banUsers = new HashSet<>();
+        for (BlockRecord r : active) {
+            if ("ban".equals(r.getActionType())) banUsers.add(r.getUserId());
+            else interceptUsers.add(r.getUserId());
+        }
+        // 封号是最高层操作：已封号用户不出现在拦截名单
+        interceptUsers.removeAll(banUsers);
+        List<String> flagged = logRepo.findFlaggedUsers();
+        flagged.removeAll(interceptUsers); flagged.removeAll(banUsers);
+        return Map.of(
+            "interceptUsers", new ArrayList<>(interceptUsers),
+            "banUsers", new ArrayList<>(banUsers),
+            "flaggedUsers", flagged.subList(0, Math.min(50, flagged.size()))
+        );
+    }
+
+    @GetMapping("/history")
+    public Map<String, Object> getHistory(@RequestParam(defaultValue = "week") String range) {
+        LocalDateTime since = LocalDateTime.now().minusDays("week".equals(range)?7:"month".equals(range)?30:365);
+        List<BlockRecord> records = blockRepo.findSince(since);
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (BlockRecord r : records) {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("userId", r.getUserId());
+            m.put("action", r.getActionType());
+            m.put("reason", r.getReason());
+            m.put("time", r.getCreatedAt() != null ? r.getCreatedAt().toString() : "");
+            m.put("active", r.getActive());
+            result.add(m);
+        }
+        return Map.of("total", result.size(), "records", result);
+    }
+
+    @PostMapping("/ban/{userId}")
+    public Map<String, String> ban(@PathVariable String userId) {
+        // 封号后清除该用户所有待处理告警（拦截历史不动）
+        alertRepo.resolveByUserId(userId);
+        // 封号替代拦截：把该用户的拦截记录标记失效
+        blockRepo.deactivateByUser(userId);
+        List<BlockRecord> existing = blockRepo.findByActiveTrue();
+        for (BlockRecord r : existing) {
+            if (r.getUserId().equals(userId) && "intercept".equals(r.getActionType())) {
+                r.setActive(false); blockRepo.save(r);
+            }
+        }
+        BlockRecord ban = new BlockRecord();
+        ban.setUserId(userId); ban.setActionType("ban"); ban.setReason("手动封号"); ban.setActive(true);
+        blockRepo.save(ban);
+        return Map.of("status", "ok");
+    }
+
+    @PostMapping("/unban/{userId}")
+    public Map<String, String> unban(@PathVariable String userId) {
+        blockRepo.deactivateByUser(userId);
+        return Map.of("status", "ok");
+    }
+
+    @PostMapping("/intercept/{userId}")
+    public Map<String, String> intercept(@PathVariable String userId) {
+        BlockRecord r = new BlockRecord();
+        r.setUserId(userId); r.setActionType("intercept"); r.setReason("手动拦截"); r.setActive(true);
+        blockRepo.save(r);
+        return Map.of("status", "ok");
+    }
+
+    @PostMapping("/unintercept/{userId}")
+    public Map<String, String> unintercept(@PathVariable String userId) {
+        blockRepo.deactivateByUserAndType(userId, "intercept");
+        return Map.of("status", "ok");
+    }
+}

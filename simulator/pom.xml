@@ -1,0 +1,12 @@
+<project><modelVersion>4.0.0</modelVersion>
+<groupId>com.antifraud</groupId><artifactId>dpi-simulator</artifactId><version>1.0.0</version>
+<properties><project.build.sourceEncoding>UTF-8</project.build.sourceEncoding><maven.compiler.release>17</maven.compiler.release></properties>
+<dependencies>
+  <dependency><groupId>org.apache.kafka</groupId><artifactId>kafka-clients</artifactId><version>3.9.0</version></dependency>
+  <dependency><groupId>com.fasterxml.jackson.core</groupId><artifactId>jackson-databind</artifactId><version>2.17.0</version></dependency>
+</dependencies>
+<build><plugins><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-jar-plugin</artifactId><version>3.3.0</version>
+<configuration><archive><manifest><mainClass>com.antifraud.simulator.Main</mainClass></manifest></archive></configuration>
+</plugin><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-shade-plugin</artifactId><version>3.5.0</version>
+<executions><execution><phase>package</phase><goals><goal>shade</goal></goals></execution></executions></plugin></plugins></build>
+</project>

@@ -1,0 +1,217 @@
+/* ==========================================================================
+   设计 Token 层 —— Sentinel 3.0「明亮简洁后台」主题
+   统一管理色彩 / 间距 / 圆角 / 阴影 / 图表配色，并覆盖 Element Plus 默认主题。
+   原则：组件里禁止写死 hex/px，一律引用这里的 CSS 变量。
+   ========================================================================== */
+
+:root {
+  /* ===== 品牌 / 语义色 ===== */
+  --color-primary: #2563eb;   /* 主色（现代蓝） */
+  --color-success: #16a34a;   /* 成功 */
+  --color-warning: #d97706;   /* 警告 */
+  --color-danger:  #dc2626;   /* 危险 */
+  --color-info:    #64748b;   /* 信息 */
+
+  /* ===== 文字层级 ===== */
+  --text-1: #1f2937;   /* 主文字 */
+  --text-2: #4b5563;   /* 常规文字 */
+  --text-3: #6b7280;   /* 次要文字 */
+  --text-4: #9ca3af;   /* 占位 / 弱化 */
+
+  /* ===== 边框 / 背景 ===== */
+  --border-1: #e5e7eb;   /* 主边框 */
+  --border-2: #f3f4f6;   /* 浅边框 / 分隔线 */
+  --bg-page:  #f6f7f9;   /* 页面背景 */
+  --bg-card:  #ffffff;   /* 卡片背景 */
+  --bg-hover: #f1f5f9;   /* 悬浮背景 */
+
+  /* ===== 间距刻度（4 的倍数，禁止出现 11px 这类随手值） ===== */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* ===== 圆角（单个锚点派生） ===== */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* ===== 阴影 ===== */
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, .04);
+  --shadow-md: 0 4px 12px rgba(16, 24, 40, .08);
+  --shadow-lg: 0 8px 24px rgba(16, 24, 40, .12);
+
+  /* ===== 图表配色（ECharts 统一引用） ===== */
+  --chart-1: #2563eb;
+  --chart-2: #f59e0b;
+  --chart-3: #ef4444;
+  --chart-4: #10b981;
+  --chart-5: #8b5cf6;
+
+  /* ===== 布局尺寸 ===== */
+  --sidebar-width: 220px;
+  --header-height: 56px;
+
+  /* ===== 动效 ===== */
+  --dur-fast: 0.15s;
+  --dur: 0.25s;
+  --dur-slow: 0.45s;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==========================================================================
+   覆盖 Element Plus 默认主题（让它贴合上面这套 token）
+   ========================================================================== */
+:root {
+  --el-color-primary: var(--color-primary);
+  --el-color-primary-light-3: #5b85f0;
+  --el-color-primary-light-5: #86a3f4;
+  --el-color-primary-light-7: #b4c7f8;
+  --el-color-primary-light-8: #cbd9fb;
+  --el-color-primary-light-9: #e3ecfd;
+  --el-color-primary-dark-2: #1d4ed8;
+
+  --el-color-success: var(--color-success);
+  --el-color-success-light-3: #45b571;
+  --el-color-success-light-5: #74c892;
+  --el-color-success-light-7: #a3dbb8;
+  --el-color-success-light-8: #b8e5c9;
+  --el-color-success-light-9: #e7f6ec;
+  --el-color-success-dark-2: #128a3e;
+
+  --el-color-warning: var(--color-warning);
+  --el-color-warning-light-3: #e09238;
+  --el-color-warning-light-5: #e8ad6b;
+  --el-color-warning-light-7: #f0c99e;
+  --el-color-warning-light-8: #f4d7b4;
+  --el-color-warning-light-9: #fdf3e6;
+  --el-color-warning-dark-2: #b86504;
+
+  --el-color-danger: var(--color-danger);
+  --el-color-error: var(--color-danger);
+  --el-color-danger-light-3: #e35252;
+  --el-color-danger-light-5: #ea7d7d;
+  --el-color-danger-light-7: #f1a9a9;
+  --el-color-danger-light-8: #f5c0c0;
+  --el-color-danger-light-9: #fdecec;
+  --el-color-danger-dark-2: #b91c1c;
+
+  --el-color-info: var(--color-info);
+  --el-color-info-light-3: #8390a2;
+  --el-color-info-light-5: #a2acb9;
+  --el-color-info-light-7: #c1c8d1;
+  --el-color-info-light-8: #d0d6dd;
+  --el-color-info-light-9: #f0f2f5;
+  --el-color-info-dark-2: #4b5563;
+
+  /* 文字 */
+  --el-text-color-primary: var(--text-1);
+  --el-text-color-regular: var(--text-2);
+  --el-text-color-secondary: var(--text-3);
+  --el-text-color-placeholder: var(--text-4);
+
+  /* 边框 */
+  --el-border-color: var(--border-1);
+  --el-border-color-light: var(--border-1);
+  --el-border-color-lighter: var(--border-2);
+  --el-border-color-extra-light: var(--border-2);
+
+  /* 背景 */
+  --el-bg-color: var(--bg-card);
+  --el-bg-color-page: var(--bg-page);
+  --el-fill-color-light: var(--bg-hover);
+  --el-fill-color-blank: var(--bg-card);
+
+  /* 圆角 / 阴影 */
+  --el-border-radius-base: var(--radius-md);
+  --el-border-radius-small: var(--radius-sm);
+  --el-box-shadow-light: var(--shadow-md);
+}
+
+/* ==========================================================================
+   全局基础样式
+   ========================================================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #app {
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei',
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-1);
+  background: var(--bg-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 更克制的滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 常用辅助类 */
+.text-secondary { color: var(--text-3); }
+.text-muted { color: var(--text-4); }
+.mono { font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace; }
+
+/* ==========================================================================
+   动效：页面切换 / 列表过渡 / 滚动条 / 骨架屏
+   ========================================================================== */
+
+/* 页面切换过渡（配合 App.vue 的 <transition name="page" mode="out-in">） */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+/* 通用 keyframes */
+@keyframes fade-slide-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+/* lucide 图标在 Element Plus 组件（el-icon / el-button）里按字号缩放 */
+.el-icon svg.lucide,
+.el-button svg.lucide {
+  width: 1em;
+  height: 1em;
+}
